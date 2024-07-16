@@ -4,7 +4,7 @@ clear all
 N = 100; % sample size
 dof = 5; % degrees of freedom
 rng(4); X = 0.5+trnd(dof,[N,1]); % sample from a t-distribution with mean 0.5
-figure; histogram(X,20,'Normalization','pdf') % let's look at a plot
+figure; histogram(X,20,'Normalization','pdf') % let's look at a plot of the data
 hold on; plot(min(X):0.01:max(X),tpdf((min(X):0.01:max(X))-0.5,dof),'LineWidth',2)
 hold on; plot(min(X):0.01:max(X),normpdf((min(X):0.01:max(X))-0.5),'LineWidth',2)
 legend('data','student-t','normal')
@@ -13,8 +13,8 @@ mean_of_sample = mean(X) % the mean, but what is the uncertainty of our mean est
 
 
 %% IDEAL SCENARIO: WE KNOW THE TRUE STANDARD DEVIATION OF THE DATA
+% STANDARD ERROR OF MEAN = STANDARD DEVIATION / N^0.5
 standard_error_theory = sqrt(dof/(dof-2))/sqrt(N) % the standard error of the mean
-
 
 
 
@@ -31,8 +31,8 @@ MM = 1000; % number of repeats
 Y = 0.5+trnd(dof,[N,MM]); % Monte Carlo repeats
 m = mean(Y); % lots of Monte Carlo means
 standard_error_MC=std(m) % the Monte Carlo standard error
-
-
+figure; histogram(m,20,'Normalization','pdf') % let's look at a plot of the Monte Carlo means
+hold on; plot(min(m):0.01:max(m),normpdf(min(m):0.01:max(m),0.5,standard_error_theory),'LineWidth',2)
 
 
 
@@ -98,7 +98,10 @@ for ii = 1:MM % Monte Carlo
 end
 figure; histogram(bste,100); hold on; line([std(m) std(m)],[0 100],'linewidth',2); xlabel("standard error estimates"); legend("bootstrap","truth")
 fontsize(gca,20,"pixels")
-% time series bootstrap
+
+
+
+%% time series bootstrap
 for ii = 1:MM % Monte Carlo
 X = 0.5+trnd(dof,[N,1]);
 X = AA'*(X-0.5) + 0.5;
